@@ -19,3 +19,9 @@
 * **Drive 3:** Toshiba 7200rpm HDD (~500GB) - Planned for Cloud Storage, Backups, and ISOs.
 * **GPU:** No dedicated desktop GPU (Not needed for a text based environment)
 * **Network Interface:** Integrated Gigabit Ethernet.
+
+## Planned Services & Architecture
+* **Pi-hole:** Network wide ad blocking and local DNS (Planned as a lightweight LXC container)
+* **Nextcloud:** Private cloud storage and file synchronization.
+* **Cloudflare Tunnels & Custom Domain:** Secure external access and web hosting without needing router port-forwarding.
+* **Dedicated Docker VM:** A centralized virtual machine running Docker to cleanly manage and scale future applications and web projects.
