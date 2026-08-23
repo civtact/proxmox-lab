@@ -19,3 +19,5 @@
 ## Next Steps
 * Access the web UI at `https://192.168.2.218:8006`
 * Configure the `pve-no-subscription` repository.
+* Boot up first VM.
+* Configure Storage Use ect.
