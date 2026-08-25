@@ -72,3 +72,96 @@ sudo mount -a
 ```bash
 sudo apt update && sudo apt install -y ca-certificates curl gnupg
 ```
+* Create the Keyrings directory
+```bash
+sudo mkdir -p /etc/apt/keyrings
+```
+* Add Docker's Official GPG Key
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+```
+
+### Set Up the Official Docker Repository
+```bash 
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+$(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+### Install Docker Engine & Compose
+```bash
+sudo apt update
+sudo apt install -y docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+* Avoid **sudo** for Every Docker Command (Optional but recommended)
+```bash
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
+
+### Create a Project Directory
+```bash 
+sudo mkdir -p /opt/nextcloud && sudo chown -R $USER:$USER /opt/nextcloud
+```
+
+### Create the Docker Compose File
+```bash
+cd /opt/nextcloud
+nano docker-compose.yml
+```
+* **Docker Compose Configuration** (docker-compose.yml)
+```yaml
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:10.6
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: random_root_password_change_me
+      MYSQL_PASSWORD: nextcloud_password_change_me
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+
+  nextcloud:
+    image: nextcloud:latest
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - /opt/nextcloud/html:/var/www/html
+      - /mnt/nextcloud-storage:/var/www/html/data
+    environment:
+      MYSQL_PASSWORD: nextcloud_password_change_me
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_HOST: db
+    depends_on:
+      - db
+
+volumes:
+  db-data:
+```
+* Verify its running:
+```bash
+docker compose ps
+```
+* Hand ownership of the nextcloud-storage drive over to Nextcloud:
+```bash
+sudo chown -R 33:33 /mnt/nextcloud-storage
+```
+
+### Setting Up Background Jobs (Cron)
+```bash
+sudo crontab -e
+```
+* Add this line at the bottom of the nano file:
+```bash
+*/5 * * * * docker exec -u 33 nextcloud-nextcloud-1 php -f /var/www/html/cron.php > /dev/null 2>&1 # (nextcloud name can vary, check using 'docker ps')
+```
