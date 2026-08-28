@@ -11,7 +11,7 @@
 ## Steps Performed
 
 ### Repository Fix
-* Logged into the Proxmox Web UI (`https://192.168.2.218:8008`)
+* Logged into the Proxmox Web UI (`https://192.168.2.218:8006`)
 * Navigated to **Node (`proxmox-node.local`)** -> **Updates** -> **Repositories**.
 * Disabled the `pve-enterprise`repository.
 * Added the `pve-no-subscription`repository.
