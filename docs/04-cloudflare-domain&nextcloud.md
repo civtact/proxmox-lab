@@ -102,7 +102,7 @@ sudo chmod 644 /opt/nextcloud/html/config/CAN_INSTALL
 docker exec -it -u 33 nextcloud-nextcloud-1 php occ maintenance:repair --include-expensive
 ```
 * Add this code to your config.php file to fix possible freezing at the login screen:
-```yaml
+```php
 'overwritehost' => 'cloud.civtact.com',
   'overwriteprotocol' => 'https',
   ```
